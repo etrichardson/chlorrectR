@@ -1,10 +1,10 @@
-#' @title Temperature correction for (some) chlorophyll fluorometers
+#' @title Temperature and bias correction for chlorophyll fluorometers
 #'
 #' @description Requires temperature (celsius) and raw chlorophyll fluorescence data (ug/L). Applies Watras (2017) correction using 25 degrees celcius as the reference temperature and Richardson (2025) bias corrections. This should be applied to YSI 6600, YSI EXO, and Seabird WETStar data.
 #' 
 #' @param fchl Vector of numbers
 #' @param temp Vector of numbers
-#' @param instr One of <X, Y, Z>
+#' @param instr Instrument type must be one of the following: "EXO2", "FP", "WS", "6600"
 #' @param na_rm Whether `NA`s should be removed. Defaults to `TRUE`
 #'
 #' @returns Corrected chlorophyll concentration data using 'temp' for the numbers provided to 'fchl'
@@ -45,11 +45,10 @@ if(instr!= "FP"){
 
 if(min(tempv2, na.rm = TRUE)<=10 | max(tempv2, na.rm = TRUE)>=45)
   warning("Temperature must be in celsius")
+
+if(fchl >50)
+  warning("Chlorophyll fluorometer readings above 50 ug/L are less likely to be accurate")  
   
-
-
-
-
   # Actual correction code
   if(instr == "EXO2"){
     corr.temp_fchl <- chlv2 / (1 + (0.01 * (temp_c - 25)))

@@ -1,15 +1,31 @@
 # Run all tests in this script:
 ## testthat::test_file(file.path("tests", "testthat", "test-correct_fchl.R"))
 
+
+#working: 
+correct_fchl(fchl = 3.67, instr = EXO2, temp = 23.03, na_rm = TRUE)
+
+
 # Error testing
 test_that("Errors work as desired", {
-   expect_error(correct_fchl(x = NULL, na_rm = TRUE))
-   expect_error(correct_fchl(x = "not a number", na_rm = TRUE))
- })
+  expect_error(correct_fchl(fchl = -2, instr = EXO2, temp = 23.03, na_rm = TRUE))
+  expect_error(correct_fchl(fchl = "banana", instr = EXO2, temp = 23.03, na_rm = TRUE))
+  expect_error(correct_fchl(fchl = NULL, instr = EXO2, temp = 23.03, na_rm = TRUE)) 
+  
+  expect_error(correct_fchl(fchl = 3.67, instr = NULL, temp = 23.03, na_rm = TRUE))
+  expect_error(correct_fchl(fchl = 3.67, instr = EXO, temp = 23.03, na_rm = TRUE))
+
+
+  expect_error(correct_fchl(fchl = 3.67, instr = EXO2, temp = NULL, na_rm = TRUE))
+
+  expect_error(correct_fchl(fchl = 3.67, instr = EXO2, temp = 23.03, na_rm = banana))
+})
 
 # Warning testing
 test_that("Warnings work as desired", {
-   expect_warning(correct_fchl(x = c(1, 2, 3), na_rm = "false"))
+  expect_error(correct_fchl(fchl = 3.67, instr = EXO2, temp = 100, na_rm = TRUE))  
+  expect_error(correct_fchl(fchl = 3.67, instr = EXO2, temp = 1, na_rm = TRUE))
+  expect_error(correct_fchl(fchl = 75, instr = EXO2, temp = 25, na_rm = TRUE))
 })
 
 # Message testing
