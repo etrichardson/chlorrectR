@@ -4,7 +4,6 @@ Version: 0.0.0.100
 Authors@R: 
     person("Emily", "Richardson", , "emy.t.richardson@gmail.com", role = c("aut", "cre"))
 Description: Data produced by chlorophyll fluorometers must be corrected in order to serve as more reliable proxies for "real" chlorophyll concentration. Different sensor types require different corrections, including temperature and unique bias corrections (but not necessarily both). Here, correction formulae are presented for YSI 6600, YSI EXO2, bbe Moldaenke FluoroProbe, and Seabird WETStar chlorophyll fluorometers.
-License: Apache License (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
@@ -12,4 +11,6 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports:
-    dplyr
+    dplyr,
+    magrittr
+License: Apache License (>= 2)

@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(fchl_corr)
+library(chlorrectR)
 
-test_check("fchl_corr")
+test_check("chlorrectR")

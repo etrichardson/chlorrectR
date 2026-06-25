@@ -10,6 +10,8 @@
 #' @returns Corrected chlorophyll concentration data using 'temp' for the numbers provided to 'fchl'
 #' @export
 #' 
+#' @importFrom magrittr %>%
+#' 
 #' @examples
 #' # Temperature correction (for 6600, EXO2, or WS)
 #' 
