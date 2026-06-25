@@ -1,4 +1,4 @@
-Package: fchl_corr
+Package: chlorrectR
 Title: Correction Formulae for Chlorophyll Fluorometers
 Version: 0.0.0.100
 Authors@R: 
