@@ -29,13 +29,13 @@ if(is.logical(na_rm)!=TRUE){
   warning("na_rm must be TRUE or FALSE. Setting to default (TRUE)")
   na_rm <- TRUE }
 
-if(na_rm == TRUE) {
-  chlv2 <- fchl[!is.na(fchl)]
-  tempv2 <- temp[!is.na(temp)]
-} else {
- chlv2 <- fchl
-  tempv2 <- temp
-}
+# if(na_rm == TRUE) {
+#   chlv2 <- fchl[!is.na(fchl)]
+#   tempv2 <- temp[!is.na(temp)]
+# } else {
+  chlv2 <- fchl
+   tempv2 <- temp
+# }
 
 if(instr!= "FP"){
     if(is.null(tempv2)==TRUE || is.numeric(tempv2)!=TRUE || length(chlv2)!=length(tempv2))
@@ -46,12 +46,12 @@ if(instr!= "FP"){
 if(min(tempv2, na.rm = TRUE)<=10 | max(tempv2, na.rm = TRUE)>=45)
   warning("Temperature must be in celsius")
 
-if(fchl >50)
+if(any(chlv2[!is.na(chlv2)] >50))
   warning("Chlorophyll fluorometer readings above 50 ug/L are less likely to be accurate")  
   
   # Actual correction code
   if(instr == "EXO2"){
-    corr.temp_fchl <- chlv2 / (1 + (0.01 * (temp_c - 25)))
+    corr.temp_fchl <- chlv2 / (1 + (0.01 * (tempv2 - 25)))
     corr.instr_fchl <- (1.29 * corr.temp_fchl) + 0.33
   } 
   else if (instr == "FP"){
@@ -67,6 +67,12 @@ if(fchl >50)
     corr.temp_fchl <- chlv2 / (1 + (0.01 * (tempv2 - 25)))
     corr.instr_fchl <- (0.72 * corr.temp_fchl) - 0.06
   }
+
+  if(na_rm == TRUE) {
+
+    final_fchl <- corr.instr_fchl[!is.na(corr.instr_fchl)]
+  } else {final_fchl <- corr.instr_fchl}
+
   # Return corrected fChl
-  return(corr.instr_fchl)
+  return(final_fchl)
 }
