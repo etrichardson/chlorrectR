@@ -6,7 +6,6 @@
 #' @param instr Instrument type must be one of the following: "EXO2", "FP", "WS", "6600"
 #' @param skip_tcorr Whether or not to skip the temperature correction step (for example, most USGS data already apply temperature corrections). Defaults to `FALSE`.
 #' @param temp Vector of numbers (Temperature in Celsius)
-#' @param na.rm Whether or not `NA`s should be removed. Defaults to `TRUE`.
 #' 
 #' @returns Corrected chlorophyll concentration data using 'temp' (if applicable) for the numbers provided to 'fchl'
 #' @export
@@ -21,11 +20,11 @@
 #' #test_df <- cbind(raw_chl, temp_c)
 #' 
 #' # Assuming that these data are produced by the YSI EXO2 and have not already been temperature corrected:
-#' #correct_fchl(fchl = test_df$raw_chl, instr = "EXO2", skip_tcorr = FALSE, temp = test_df$temp_c, na.rm = TRUE)
-
+#' #test_df <- test_df %>% mutate(corr_chl = correct_fchl(fchl = raw_chl, instr = "EXO2", skip_tcorr = FALSE, temp = temp_c))
+#' 
 
 correct_fchl <- function(fchl = NULL, instr = NULL, 
-  skip_tcorr = FALSE, temp = NULL, na.rm = TRUE){
+  skip_tcorr = FALSE, temp = NULL){
 
   # Error checks here
 
@@ -34,10 +33,6 @@ correct_fchl <- function(fchl = NULL, instr = NULL,
 
   if(is.null(instr)==TRUE || is.character(instr)!=TRUE || instr %in% c("EXO2", "FP", "WS", "6600") != TRUE) 
     stop('Instrument type must be one of the following: "EXO2", "FP", "WS", "6600"')
-  
-  if(is.logical(na.rm)!=TRUE){
-    warning("na.rm must be TRUE or FALSE. Setting to default (TRUE)")
-    na.rm <- TRUE }
 
   if(instr != "FP"){
     if(is.null(temp)==TRUE || is.numeric(temp)!=TRUE || length(fchl)!=length(temp))
@@ -66,10 +61,10 @@ if(skip_tcorr == FALSE & instr != "FP"){
     corr.instr_fchl <- (1.29 * corr.temp_fchl) + 0.33
   } 
   else if (instr == "FP"){
-    corr.instr_fchl <- fchl %>% 
-    dplyr::mutate(fchl = dplyr::case_when(
-    fchl < 16 ~ 0.39*fchl+0.33,
-    fchl >= 16 ~ 0.71*fchl-4.66))  
+    corr.instr_fchl <- ifelse(
+      fchl < 16,
+      0.39 * fchl + 0.33,
+      0.71 * fchl - 4.66) 
   }
   else if (instr == "6600"){
     corr.instr_fchl <- corr.temp_fchl
@@ -78,11 +73,6 @@ if(skip_tcorr == FALSE & instr != "FP"){
     corr.instr_fchl <- (0.72 * corr.temp_fchl) - 0.06
   }
 
-  if(na.rm == TRUE) {
-
-    final_fchl <- corr.instr_fchl[!is.na(corr.instr_fchl)]
-  } else {final_fchl <- corr.instr_fchl}
-
   # Return corrected fChl
-  return(final_fchl)
+  return(corr.instr_fchl)
 }
