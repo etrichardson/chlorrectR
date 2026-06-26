@@ -1,6 +1,6 @@
-#' @title Temperature and bias correction for chlorophyll fluorometers
+#' @title chlorrectR: Temperature and bias corrections for a suite of chlorophyll fluorometers
 #'
-#' @description Requires temperature (celsius) and raw chlorophyll fluorescence data (ug/L). Applies Watras (2017) correction using 25 degrees celcius as the reference temperature and Richardson (2025) bias corrections. This should be applied to YSI 6600, YSI EXO, and Seabird WETStar data.
+#' @description This package contains relevant correction formulae for several different types of chlorophyll fluorometers. Applies Watras (2017) correction using 25 degrees celcius as the reference temperature where relevant and Richardson (2025) bias corrections where relevant. This should be applied to YSI 6600, YSI EXO, and Seabird WETStar data.
 #' 
 #' @param fchl Vector of numbers.
 #' @param instr Instrument type must be one of the following: "EXO2", "FP", "WS", "6600"
@@ -8,13 +8,21 @@
 #' @param temp Vector of numbers (Temperature in Celsius)
 #' @param na.rm Whether or not `NA`s should be removed. Defaults to `TRUE`.
 #' 
-#' @returns Corrected chlorophyll concentration data using 'temp' for the numbers provided to 'fchl'
+#' @returns Corrected chlorophyll concentration data using 'temp' (if applicable) for the numbers provided to 'fchl'
 #' @export
 #' 
 #' @importFrom magrittr %>%
 #' 
 #' @examples
-#' # TBD
+#' # Example raw chlorophyll fluorescence and temperature vectors
+#' #raw_chl<- c(4.56, 5.01, 6.21, NA, 43.95)
+#' #temp_c <- c(23.0, 24.1, NA, 25.3, NA)
+#' 
+#' #test_df <- cbind(raw_chl, temp_c)
+#' 
+#' # Assuming that these data are produced by the YSI EXO2 and have not already been temperature corrected:
+#' #correct_fchl(fchl = test_df$raw_chl, instr = "EXO2", skip_tcorr = FALSE, temp = test_df$temp_c, na.rm = TRUE)
+
 
 correct_fchl <- function(fchl = NULL, instr = NULL, 
   skip_tcorr = FALSE, temp = NULL, na.rm = TRUE){
