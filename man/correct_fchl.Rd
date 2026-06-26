@@ -4,16 +4,24 @@
 \alias{correct_fchl}
 \title{Temperature and bias correction for chlorophyll fluorometers}
 \usage{
-correct_fchl(fchl = NULL, instr = NULL, temp = NULL, na_rm = TRUE)
+correct_fchl(
+  fchl = NULL,
+  instr = NULL,
+  skip_tcorr = FALSE,
+  temp = NULL,
+  na.rm = TRUE
+)
 }
 \arguments{
-\item{fchl}{Vector of numbers}
+\item{fchl}{Vector of numbers.}
 
 \item{instr}{Instrument type must be one of the following: "EXO2", "FP", "WS", "6600"}
 
-\item{temp}{Vector of numbers}
+\item{skip_tcorr}{Whether or not to skip the temperature correction step (for example, most USGS data already apply temperature corrections). Defaults to \code{FALSE}.}
 
-\item{na_rm}{Whether \code{NA}s should be removed. Defaults to \code{TRUE}}
+\item{temp}{Vector of numbers (Temperature in Celsius)}
+
+\item{na.rm}{Whether or not \code{NA}s should be removed. Defaults to \code{TRUE}.}
 }
 \value{
 Corrected chlorophyll concentration data using 'temp' for the numbers provided to 'fchl'
@@ -22,6 +30,5 @@ Corrected chlorophyll concentration data using 'temp' for the numbers provided t
 Requires temperature (celsius) and raw chlorophyll fluorescence data (ug/L). Applies Watras (2017) correction using 25 degrees celcius as the reference temperature and Richardson (2025) bias corrections. This should be applied to YSI 6600, YSI EXO, and Seabird WETStar data.
 }
 \examples{
-# Temperature correction (for 6600, EXO2, or WS)
-
+# TBD
 }
