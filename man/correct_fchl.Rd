@@ -2,15 +2,9 @@
 % Please edit documentation in R/correct_fchl.R
 \name{correct_fchl}
 \alias{correct_fchl}
-\title{Temperature and bias correction for chlorophyll fluorometers}
+\title{chlorrectR: Temperature and bias corrections for a suite of chlorophyll fluorometers}
 \usage{
-correct_fchl(
-  fchl = NULL,
-  instr = NULL,
-  skip_tcorr = FALSE,
-  temp = NULL,
-  na.rm = TRUE
-)
+correct_fchl(fchl = NULL, instr = NULL, skip_tcorr = FALSE, temp = NULL)
 }
 \arguments{
 \item{fchl}{Vector of numbers.}
@@ -20,15 +14,31 @@ correct_fchl(
 \item{skip_tcorr}{Whether or not to skip the temperature correction step (for example, most USGS data already apply temperature corrections). Defaults to \code{FALSE}.}
 
 \item{temp}{Vector of numbers (Temperature in Celsius)}
-
-\item{na.rm}{Whether or not \code{NA}s should be removed. Defaults to \code{TRUE}.}
 }
 \value{
-Corrected chlorophyll concentration data using 'temp' for the numbers provided to 'fchl'
+Corrected chlorophyll concentration data using 'temp' (if applicable) for the numbers provided to 'fchl'
 }
 \description{
-Requires temperature (celsius) and raw chlorophyll fluorescence data (ug/L). Applies Watras (2017) correction using 25 degrees celcius as the reference temperature and Richardson (2025) bias corrections. This should be applied to YSI 6600, YSI EXO, and Seabird WETStar data.
+This package contains relevant correction formulae for several different types of chlorophyll fluorometers. Applies Watras (2017) correction using 25 degrees celcius as the reference temperature where relevant and Richardson (2025) bias corrections where relevant. This should be applied to YSI 6600, YSI EXO, and Seabird WETStar data.
 }
 \examples{
-# TBD
+# library(dplyr)
+# Example raw chlorophyll fluorescence and temperature vectors
+# raw_chl<- c(4.56, 5.01, 6.21, NA, 43.95)
+# temp_c <- c(23.0, 24.1, NA, 25.3, NA)
+
+# test_df <- cbind(raw_chl, temp_c)
+
+# Assuming that these data are produced by the YSI EXO2 and have not already been temperature corrected:
+# test_df <- test_df \%>\% mutate(corr_chl = correct_fchl(fchl = raw_chl, instr = "EXO2", skip_tcorr = FALSE, temp = temp_c))
+
+# Returns the following dataframe:
+
+#> test_df 
+#  raw_chl temp_c corr_chl
+#1    4.56   23.0     6.33
+#2    5.01   24.1     6.85
+#3    6.21     NA       NA
+#4      NA   25.3       NA
+#5   43.95     NA       NA
 }
