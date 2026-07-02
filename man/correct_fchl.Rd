@@ -4,7 +4,12 @@
 \alias{correct_fchl}
 \title{chlorrectR: Temperature and bias corrections for a suite of chlorophyll fluorometers}
 \usage{
-correct_fchl(fchl = NULL, instr = NULL, skip_tcorr = FALSE, temp = NULL)
+correct_fchl(
+  fchl = NULL,
+  instr = c("EXO2", "FP", "WS", "6600"),
+  skip_tcorr = FALSE,
+  temp = NULL
+)
 }
 \arguments{
 \item{fchl}{Vector of numbers.}

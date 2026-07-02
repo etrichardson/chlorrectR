@@ -33,56 +33,89 @@
 #' #4      NA   25.3       NA
 #' #5   43.95     NA       NA
 
-correct_fchl <- function(fchl = NULL, instr = NULL, 
-  skip_tcorr = FALSE, temp = NULL){
 
-  # Error checks here
 
-  if(is.null(fchl)==TRUE || is.numeric(fchl)!=TRUE || min(fchl, na.rm = TRUE) < 0)
+correct_fchl <- function(fchl = NULL,
+                         instr = c("EXO2", "FP", "WS", "6600"),
+                         skip_tcorr = FALSE,
+                         temp = NULL) {
+
+  ## ---------------------------
+  ## Validate fchl
+  ## ---------------------------
+  if (is.null(fchl) || !is.numeric(fchl) || any(fchl < 0, na.rm = TRUE)) {
     stop("fchl must be a vector of positive numbers")
-
-  if(is.null(instr)==TRUE || is.character(instr)!=TRUE || instr %in% c("EXO2", "FP", "WS", "6600") != TRUE) 
-    stop('Instrument type must be one of the following: "EXO2", "FP", "WS", "6600"')
-
-  if(instr != "FP"){
-    if(is.null(temp)==TRUE || is.numeric(temp)!=TRUE || length(fchl)!=length(temp))
-      stop("Temperature must be a vector of as many numbers as chlorophyll") 
   }
-  
-  # Warnings here
 
-  if(is.logical(skip_tcorr)!=TRUE){
-    warning("skip_tcorr must be TRUE or FALSE. Setting to default (FALSE)")
-    skip_tcorr <- FALSE}
+  ## ---------------------------
+  ## Validate instrument
+  ## ---------------------------
+  instr <- match.arg(instr)
 
-  if(min(temp, na.rm = TRUE)<=10 | max(temp, na.rm = TRUE)>=45)
-    warning("Temperature must be in celsius")
+  ## ---------------------------
+  ## Validate skip_tcorr
+  ## ---------------------------
+  if (!is.logical(skip_tcorr) || length(skip_tcorr) != 1) {
+    warning("skip_tcorr must be TRUE or FALSE. Setting to FALSE")
+    skip_tcorr <- FALSE
+  }
 
-  if(any(fchl[!is.na(fchl)] >50))
-    warning("Chlorophyll fluorometer readings above 50 ug/L are less likely to be accurate")  
-  
-  # Actual correction code
+  ## ---------------------------
+  ## Decide if temperature is needed
+  ## ---------------------------
+  needs_temp <- !skip_tcorr && instr != "FP"
 
-if(skip_tcorr == FALSE & instr != "FP"){
-  corr.temp_fchl <- fchl / (1 + (0.01 * (temp - 25)))}
-  else {corr.temp_fchl <- fchl}
+  ## ---------------------------
+  ## Validate temp only if needed
+  ## ---------------------------
+  if (needs_temp) {
 
-  if(instr == "EXO2"){
-    corr.instr_fchl <- (1.29 * corr.temp_fchl) + 0.33
-  } 
-  else if (instr == "FP"){
-    corr.instr_fchl <- ifelse(
+    if (is.null(temp) || !is.numeric(temp) || length(temp) != length(fchl)) {
+      stop("Temperature must be a numeric vector with the same length as fchl")
+    }
+
+    if (any(temp < 10, na.rm = TRUE) || any(temp > 45, na.rm = TRUE)) {
+      warning("Temperature appears to be outside expected Celsius range")
+    }
+  }
+
+  ## ---------------------------
+  ## Warnings unrelated to temp requirement
+  ## ---------------------------
+  if (any(fchl > 50, na.rm = TRUE)) {
+    warning("Chlorophyll fluorometer readings above 50 ug/L are less likely to be accurate")
+  }
+
+  ## ---------------------------
+  ## Temperature correction
+  ## ---------------------------
+  if (needs_temp) {
+    corr.temp_fchl <- fchl / (1 + (0.01 * (temp - 25)))
+  } else {
+    corr.temp_fchl <- fchl
+  }
+
+  ## ---------------------------
+  ## Instrument correction
+  ## ---------------------------
+  corr.instr_fchl <- switch(
+    instr,
+
+    "EXO2" = (1.29 * corr.temp_fchl) + 0.33,
+
+    "FP" = ifelse(
       fchl < 16,
       0.39 * fchl + 0.33,
-      0.71 * fchl - 4.66) 
-  }
-  else if (instr == "6600"){
-    corr.instr_fchl <- corr.temp_fchl
-  }
-  else if (instr == "WS"){
-    corr.instr_fchl <- (0.72 * corr.temp_fchl) - 0.06
-  }
+      0.71 * fchl - 4.66
+    ),
 
-  # Return corrected fChl
+    "6600" = corr.temp_fchl,
+
+    "WS" = (0.72 * corr.temp_fchl) - 0.06
+  )
+
+  ## ---------------------------
+  ## Return
+  ## ---------------------------
   return(round(corr.instr_fchl, 2))
 }
